@@ -1,24 +1,41 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
-export default class Demo extends Phaser.Scene {
+export default class Main extends Phaser.Scene {
   constructor() {
-    super('GameScene');
+    super("GameScene");
+  }
+
+  private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+  private arrow!: Phaser.Types.Input.Keyboard.CursorKeys;
+
+  private move_player() {
+    if (this.arrow.left.isDown) {
+      this.player.body.setVelocityX(-200);
+    } else if (this.arrow.right.isDown) {
+      this.player.body.setVelocityX(200);
+    } else {
+      this.player.body.setVelocityX(0);
+    }
+
+    if (this.arrow.up.isDown && this.player.body.onFloor()) {
+      console.log("Jump!!!");
+      this.player.body.setVelocityY(-320);
+    }
   }
 
   preload() {
-    this.load.image('logo', 'assets/phaser3-logo.png');
+    this.load.setBaseURL("assets/");
+    this.load.image("player", "player.png");
   }
 
   create() {
-    const logo = this.add.image(400, 70, 'logo');
+    this.player = this.physics.add.sprite(250, 170, "player");
+    this.player.body.setGravityY(500);
 
-    this.tweens.add({
-      targets: logo,
-      y: 350,
-      duration: 1500,
-      ease: 'Sine.inOut',
-      yoyo: true,
-      repeat: -1
-    });
+    this.arrow = this.input.keyboard.createCursorKeys();
+  }
+
+  update(time: number, delta: number) {
+    this.move_player();
   }
 }
