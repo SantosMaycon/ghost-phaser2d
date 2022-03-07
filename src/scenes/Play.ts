@@ -1,8 +1,8 @@
 import Phaser from "phaser";
 
-export default class Main extends Phaser.Scene {
+export default class Play extends Phaser.Scene {
   constructor() {
-    super("GameScene");
+    super("PlayScene");
   }
 
   private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
@@ -99,17 +99,8 @@ export default class Main extends Phaser.Scene {
     );
 
     if (fall_of_world || overlap_with_enemies) {
-      this.scene.start("GameScene");
+      this.scene.start("MenuScene", { score: this.score });
     }
-  }
-
-  preload() {
-    this.load.setBaseURL("assets/");
-    this.load.image("player", "player.png");
-    this.load.image("wallVertical", "wallVertical.png");
-    this.load.image("wallHorizontal", "wallHorizontal.png");
-    this.load.image("coin", "coin.png");
-    this.load.image("enemy", "enemy.png");
   }
 
   create() {
@@ -135,9 +126,13 @@ export default class Main extends Phaser.Scene {
   update(time: number, delta: number) {
     this.physics.collide(this.player, this.walls);
     this.physics.collide(this.enemies, this.walls);
+
+    if (!this.player.active) return;
+
     if (this.physics.overlap(this.player, this.coin)) {
       this.take_coin();
     }
+
     this.move_player();
     this.player_die();
   }
