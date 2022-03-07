@@ -14,6 +14,22 @@ export default class Main extends Phaser.Scene {
   private score!: number;
   private scoreLabel!: Phaser.GameObjects.Text;
 
+  private enemies!: Phaser.Physics.Arcade.Group;
+
+  private add_enemy() {
+    const enemy: Phaser.Types.Physics.Arcade.ImageWithDynamicBody =
+      this.enemies.create(250, -10, "enemy");
+
+    enemy.setGravityY(500);
+    enemy.setVelocityX(Phaser.Math.RND.pick([-100, 100]));
+    enemy.setBounceX(1); // change the direction when hit the wall
+
+    this.time.addEvent({
+      delay: 10000,
+      callback: () => enemy.destroy(),
+    });
+  }
+
   private update_coin_position() {
     let positions = [
       { x: 140, y: 60 },
@@ -40,15 +56,15 @@ export default class Main extends Phaser.Scene {
 
   private move_player() {
     if (this.arrow.left.isDown) {
-      this.player.body.setVelocityX(-200);
+      this.player.setVelocityX(-200);
     } else if (this.arrow.right.isDown) {
-      this.player.body.setVelocityX(200);
+      this.player.setVelocityX(200);
     } else {
-      this.player.body.setVelocityX(0);
+      this.player.setVelocityX(0);
     }
 
     if (this.arrow.up.isDown && this.player.body.onFloor()) {
-      this.player.body.setVelocityY(-320);
+      this.player.setVelocityY(-320);
     }
   }
 
@@ -76,7 +92,13 @@ export default class Main extends Phaser.Scene {
   }
 
   private player_die() {
-    if (this.player.y > 340 || this.player.y < 0) {
+    const fall_of_world = this.player.y > 340 || this.player.y < 0;
+    const overlap_with_enemies = this.physics.overlap(
+      this.player,
+      this.enemies
+    );
+
+    if (fall_of_world || overlap_with_enemies) {
       this.scene.start("GameScene");
     }
   }
@@ -87,6 +109,7 @@ export default class Main extends Phaser.Scene {
     this.load.image("wallVertical", "wallVertical.png");
     this.load.image("wallHorizontal", "wallHorizontal.png");
     this.load.image("coin", "coin.png");
+    this.load.image("enemy", "enemy.png");
   }
 
   create() {
@@ -96,13 +119,22 @@ export default class Main extends Phaser.Scene {
     });
     this.coin = this.physics.add.sprite(60, 130, "coin");
     this.player = this.physics.add.sprite(250, 170, "player");
-    this.player.body.setGravityY(500);
+    this.player.setGravityY(500);
     this.arrow = this.input.keyboard.createCursorKeys();
+    this.enemies = this.physics.add.group();
+
+    this.time.addEvent({
+      delay: 2200,
+      callback: () => this.add_enemy(),
+      loop: true,
+    });
+
     this.create_world();
   }
 
   update(time: number, delta: number) {
     this.physics.collide(this.player, this.walls);
+    this.physics.collide(this.enemies, this.walls);
     if (this.physics.overlap(this.player, this.coin)) {
       this.take_coin();
     }
