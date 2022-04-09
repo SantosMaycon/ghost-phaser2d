@@ -12,6 +12,10 @@ export default class Load extends Phaser.Scene {
     this.load.image("coin", "coin.png");
     this.load.image("enemy", "enemy.png");
 
+    this.load.audio("jump", ["jump.ogg", "jump.mp3"]);
+    this.load.audio("coin", ["coin.ogg", "coin.mp3"]);
+    this.load.audio("dead", ["dead.ogg", "dead.mp3"]);
+
     this.add
       .text(250, 170, "loading", {
         font: "30px Arial",

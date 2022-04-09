@@ -16,6 +16,10 @@ export default class Play extends Phaser.Scene {
 
   private enemies!: Phaser.Physics.Arcade.Group;
 
+  private jump_sound!: Phaser.Sound.BaseSound;
+  private coin_sound!: Phaser.Sound.BaseSound;
+  private dead_sound!: Phaser.Sound.BaseSound;
+
   private add_enemy() {
     const enemy: Phaser.Types.Physics.Arcade.ImageWithDynamicBody =
       this.enemies.create(250, -10, "enemy");
@@ -50,6 +54,7 @@ export default class Play extends Phaser.Scene {
   private take_coin() {
     this.score += 5;
     this.scoreLabel.setText("Score: " + this.score.toString());
+    this.coin_sound.play();
 
     this.update_coin_position();
   }
@@ -64,6 +69,7 @@ export default class Play extends Phaser.Scene {
     }
 
     if (this.arrow.up.isDown && this.player.body.onFloor()) {
+      this.jump_sound.play();
       this.player.setVelocityY(-320);
     }
   }
@@ -99,6 +105,7 @@ export default class Play extends Phaser.Scene {
     );
 
     if (fall_of_world || overlap_with_enemies) {
+      this.dead_sound.play();
       this.scene.start("MenuScene", { score: this.score });
     }
   }
@@ -119,6 +126,10 @@ export default class Play extends Phaser.Scene {
       callback: () => this.add_enemy(),
       loop: true,
     });
+
+    this.jump_sound = this.sound.add("jump");
+    this.coin_sound = this.sound.add("coin");
+    this.dead_sound = this.sound.add("dead");
 
     this.create_world();
   }
