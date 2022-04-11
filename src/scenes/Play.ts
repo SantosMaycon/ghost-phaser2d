@@ -62,10 +62,13 @@ export default class Play extends Phaser.Scene {
   private move_player() {
     if (this.arrow.left.isDown) {
       this.player.setVelocityX(-200);
+      this.player.anims.play("left", true);
     } else if (this.arrow.right.isDown) {
       this.player.setVelocityX(200);
+      this.player.anims.play("right", true);
     } else {
       this.player.setVelocityX(0);
+      this.player.setFrame(0);
     }
 
     if (this.arrow.up.isDown && this.player.body.onFloor()) {
@@ -110,6 +113,22 @@ export default class Play extends Phaser.Scene {
     }
   }
 
+  private create_animation() {
+    this.anims.create({
+      key: "right",
+      frames: this.anims.generateFrameNumbers("player", { frames: [1, 2] }),
+      frameRate: 8,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "left",
+      frames: this.anims.generateFrameNumbers("player", { frames: [3, 4] }),
+      frameRate: 8,
+      repeat: -1,
+    });
+  }
+
   create() {
     this.score = 0;
     this.scoreLabel = this.add.text(30, 25, "Score: 0", {
@@ -131,6 +150,7 @@ export default class Play extends Phaser.Scene {
     this.coin_sound = this.sound.add("coin");
     this.dead_sound = this.sound.add("dead");
 
+    this.create_animation();
     this.create_world();
   }
 
