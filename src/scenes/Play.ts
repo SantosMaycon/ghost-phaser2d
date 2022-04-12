@@ -124,6 +124,8 @@ export default class Play extends Phaser.Scene {
     );
 
     if (fall_of_world || overlap_with_enemies) {
+      // this.cameras.main.flash(300, 255, 50, 35);
+      this.cameras.main.shake(300, 0.02);
       this.player.destroy();
       this.dead_sound.play();
       this.emitter.explode(40, this.player.x, this.player.y);
