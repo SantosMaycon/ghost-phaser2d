@@ -26,7 +26,7 @@ export default class Menu extends Phaser.Scene {
       })
       .setOrigin(0.5, 0.5);
 
-    const label_start = this.add
+    this.add
       .text(250, 275, "Press the up arrow key to start", {
         font: "25px Arial",
       })
@@ -39,15 +39,6 @@ export default class Menu extends Phaser.Scene {
       yoyo: true,
       repeat: -1,
     });
-
-    // Tween rotation start label
-    // this.tweens.add({
-    //   targets: label_start,
-    //   angle: { from: -2, to: 2 },
-    //   duration: 1000,
-    //   yoyo: true,
-    //   repeat: -1,
-    // });
 
     this.up_key = this.input.keyboard.addKey("up");
   }

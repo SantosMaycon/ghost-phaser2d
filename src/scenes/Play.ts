@@ -15,6 +15,7 @@ export default class Play extends Phaser.Scene {
   private scoreLabel!: Phaser.GameObjects.Text;
 
   private enemies!: Phaser.Physics.Arcade.Group;
+  private emitter!: Phaser.GameObjects.Particles.ParticleEmitter;
 
   private jump_sound!: Phaser.Sound.BaseSound;
   private coin_sound!: Phaser.Sound.BaseSound;
@@ -123,8 +124,13 @@ export default class Play extends Phaser.Scene {
     );
 
     if (fall_of_world || overlap_with_enemies) {
+      this.player.destroy();
       this.dead_sound.play();
-      this.scene.start("MenuScene", { score: this.score });
+      this.emitter.explode(40, this.player.x, this.player.y);
+      this.time.addEvent({
+        delay: 1000,
+        callback: () => this.scene.start("MenuScene", { score: this.score }),
+      });
     }
   }
 
@@ -164,6 +170,15 @@ export default class Play extends Phaser.Scene {
     this.jump_sound = this.sound.add("jump");
     this.coin_sound = this.sound.add("coin");
     this.dead_sound = this.sound.add("dead");
+
+    const particles = this.add.particles("pixel");
+    this.emitter = particles.createEmitter({
+      quantity: 15,
+      speed: { min: -150, max: 150 },
+      scale: { start: 2, end: 0.1 },
+      lifespan: 800,
+      on: false,
+    });
 
     this.create_animation();
     this.create_world();
