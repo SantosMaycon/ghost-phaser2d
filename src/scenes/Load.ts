@@ -3,6 +3,13 @@ export default class Load extends Phaser.Scene {
     super("LoadScene");
   }
 
+  private loading_label!: Phaser.GameObjects.Text;
+
+  private progress(value: number) {
+    const percentage = Math.round(value * 100) + "%";
+    this.loading_label.setText("Loading\n" + percentage);
+  }
+
   preload() {
     this.load.setBaseURL("assets/");
     this.load.image("background", "background.png");
@@ -20,14 +27,17 @@ export default class Load extends Phaser.Scene {
     this.load.audio("coin", ["coin.ogg", "coin.mp3"]);
     this.load.audio("dead", ["dead.ogg", "dead.mp3"]);
 
-    this.add
-      .text(250, 170, "loading", {
+    this.loading_label = this.add
+      .text(250, 170, "Loading\n0%", {
         font: "30px Arial",
+        align: "center",
       })
       .setOrigin(0.5, 0.5);
   }
 
   create() {
+    this.load.on("progress", this.progress, this);
+
     this.scene.start("MenuScene");
   }
 }
