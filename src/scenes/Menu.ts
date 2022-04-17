@@ -28,7 +28,7 @@ export default class Menu extends Phaser.Scene {
 
     const label_title = this.add
       .text(250, 80, "Super Coin Box", {
-        font: "50px Arial",
+        font: "50px Geo",
       })
       .setOrigin(0.5, 0.5);
 

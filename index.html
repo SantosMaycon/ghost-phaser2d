@@ -4,6 +4,7 @@
     <title>Ghost</title>
     <meta charset="utf-8" />
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Geo:ital@0;1&display=swap");
       body {
         background-color: #000;
         margin: 0;
@@ -13,10 +14,17 @@
         align-items: center;
         justify-content: center;
       }
+      .hiddenText {
+        font-family: "Geo", sans-serif;
+        visibility: hidden;
+        height: 0;
+      }
     </style>
     <script type="module" src="/src/index.ts"></script>
   </head>
   <body>
+    <!-- This is needed to load the font -->
+    <p class="hiddenText">.</p>
     <div id="game"></div>
   </body>
 </html>
