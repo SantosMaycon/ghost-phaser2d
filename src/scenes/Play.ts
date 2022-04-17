@@ -21,6 +21,8 @@ export default class Play extends Phaser.Scene {
   private coin_sound!: Phaser.Sound.BaseSound;
   private dead_sound!: Phaser.Sound.BaseSound;
 
+  private next_enemy!: number;
+
   private add_enemy() {
     const enemy: Phaser.Types.Physics.Arcade.ImageWithDynamicBody =
       this.enemies.create(250, -10, "enemy");
@@ -33,6 +35,23 @@ export default class Play extends Phaser.Scene {
       delay: 10000,
       callback: () => enemy.destroy(),
     });
+  }
+
+  private time_add_enemy(now: number) {
+    if (this.next_enemy < now) {
+      const start_difficulty = 4000;
+      const end_difficulty = 1000;
+      const score_to_reach_end_difficulty = 100;
+
+      const progress = Math.min(this.score / score_to_reach_end_difficulty, 1);
+
+      const delay =
+        start_difficulty - (start_difficulty - end_difficulty) * progress;
+
+      this.add_enemy();
+
+      this.next_enemy = now + delay;
+    }
   }
 
   private update_coin_position() {
@@ -163,11 +182,7 @@ export default class Play extends Phaser.Scene {
     this.arrow = this.input.keyboard.createCursorKeys();
     this.enemies = this.physics.add.group();
 
-    this.time.addEvent({
-      delay: 2200,
-      callback: () => this.add_enemy(),
-      loop: true,
-    });
+    this.next_enemy = 0;
 
     this.jump_sound = this.sound.add("jump");
     this.coin_sound = this.sound.add("coin");
@@ -196,6 +211,7 @@ export default class Play extends Phaser.Scene {
       this.take_coin();
     }
 
+    this.time_add_enemy(Date.now());
     this.move_player();
     this.player_die();
   }
