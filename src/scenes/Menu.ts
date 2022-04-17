@@ -12,17 +12,32 @@ export default class Menu extends Phaser.Scene {
   create(data: ICreate) {
     const score = data.score ? data.score : 0;
 
+    let best_score = localStorage.getItem("best_score");
+
+    if (best_score) {
+      if (score > Number(best_score)) {
+        localStorage.setItem("best_score", score.toString());
+        best_score = score.toLocaleString();
+      }
+    } else {
+      localStorage.setItem("best_score", "0");
+      best_score = "0";
+    }
+
     this.add.image(250, 170, "background");
 
-    let label_title = this.add
+    const label_title = this.add
       .text(250, 80, "Super Coin Box", {
         font: "50px Arial",
       })
       .setOrigin(0.5, 0.5);
 
+    const label = `Score ${score}\nBest Score ${best_score}`;
+
     this.add
-      .text(250, 170, "score: " + score.toString(), {
+      .text(250, 170, label, {
         font: "25px Arial",
+        align: "center",
       })
       .setOrigin(0.5, 0.5);
 
