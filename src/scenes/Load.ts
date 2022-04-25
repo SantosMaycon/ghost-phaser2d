@@ -13,12 +13,14 @@ export default class Load extends Phaser.Scene {
   preload() {
     this.load.setBaseURL("assets/");
     this.load.image("background", "background.png");
+
+    this.load.image("tileset", "tileset.png");
+    this.load.tilemapTiledJSON("map", "map_by_maycon.json");
+
     this.load.spritesheet("player", "player2.png", {
       frameWidth: 20,
       frameHeight: 20,
     });
-    this.load.image("wallVertical", "wallVertical.png");
-    this.load.image("wallHorizontal", "wallHorizontal.png");
     this.load.image("coin", "coin.png");
     this.load.image("enemy", "enemy.png");
     this.load.image("pixel", "pixel.png");

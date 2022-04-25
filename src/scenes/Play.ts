@@ -7,7 +7,7 @@ export default class Play extends Phaser.Scene {
 
   private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   private arrow!: Phaser.Types.Input.Keyboard.CursorKeys;
-  private walls!: Phaser.Physics.Arcade.StaticGroup;
+  private walls!: Phaser.Tilemaps.TilemapLayer;
 
   private coin!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
@@ -32,7 +32,7 @@ export default class Play extends Phaser.Scene {
     enemy.setBounceX(1); // change the direction when hit the wall
 
     this.time.addEvent({
-      delay: 10000,
+      delay: 15000,
       callback: () => enemy.destroy(),
     });
   }
@@ -113,26 +113,9 @@ export default class Play extends Phaser.Scene {
   }
 
   private create_world() {
-    this.walls = this.physics.add.staticGroup();
-
-    const list_of_walls = [
-      { x: 10, y: 170, key: "wallVertical" },
-      { x: 490, y: 170, key: "wallVertical" },
-
-      { x: 50, y: 10, key: "wallHorizontal" },
-      { x: 450, y: 10, key: "wallHorizontal" },
-      { x: 50, y: 330, key: "wallHorizontal" },
-      { x: 450, y: 330, key: "wallHorizontal" },
-
-      { x: 0, y: 170, key: "wallHorizontal" },
-      { x: 500, y: 170, key: "wallHorizontal" },
-      { x: 250, y: 90, key: "wallHorizontal" },
-      { x: 250, y: 250, key: "wallHorizontal" },
-    ];
-
-    for (const { x, y, key } of list_of_walls) {
-      this.walls.create(x, y, key);
-    }
+    const map = this.add.tilemap("map");
+    const tileset = map.addTilesetImage("tileset", "tileset");
+    this.walls = map.createLayer("Tile Layer 1", tileset).setCollision(1);
   }
 
   private player_die() {
@@ -204,6 +187,7 @@ export default class Play extends Phaser.Scene {
   update(time: number, delta: number) {
     this.physics.collide(this.player, this.walls);
     this.physics.collide(this.enemies, this.walls);
+    this.physics.collide(this.enemies, this.enemies);
 
     if (!this.player.active) return;
 
