@@ -22,6 +22,8 @@ export default class Play extends Phaser.Scene {
   private dead_sound!: Phaser.Sound.BaseSound;
 
   private next_enemy!: number;
+  private left_move: boolean = false;
+  private right_move: boolean = false;
 
   private add_enemy() {
     const enemy: Phaser.Types.Physics.Arcade.ImageWithDynamicBody =
@@ -95,10 +97,10 @@ export default class Play extends Phaser.Scene {
   }
 
   private move_player() {
-    if (this.arrow.left.isDown) {
+    if (this.arrow.left.isDown || this.left_move) {
       this.player.setVelocityX(-200);
       this.player.anims.play("left", true);
-    } else if (this.arrow.right.isDown) {
+    } else if (this.arrow.right.isDown || this.right_move) {
       this.player.setVelocityX(200);
       this.player.anims.play("right", true);
     } else {
@@ -106,10 +108,37 @@ export default class Play extends Phaser.Scene {
       this.player.setFrame(0);
     }
 
-    if (this.arrow.up.isDown && this.player.body.onFloor()) {
+    if (this.arrow.up.isDown) {
+      this.jump_player();
+    }
+  }
+
+  private jump_player() {
+    if (this.player.body.onFloor()) {
       this.jump_sound.play();
       this.player.setVelocityY(-320);
     }
+  }
+
+  private add_mobile_inputs() {
+    const buttons = [
+      { x: 400, y: 290, key: "jumpButton" },
+      { x: 100, y: 290, key: "leftButton" },
+      { x: 180, y: 290, key: "rightButton" },
+    ].map(({ x, y, key }) => {
+      const button = this.add.sprite(x, y, key);
+      button.setInteractive();
+      button.setAlpha(0.5);
+      return button;
+    });
+
+    buttons[0].on("pointerdown", this.jump_player, this);
+
+    buttons[1].on("pointerdown", () => (this.left_move = true), this);
+    buttons[1].on("pointerup", () => (this.left_move = false), this);
+
+    buttons[2].on("pointerdown", () => (this.right_move = true), this);
+    buttons[2].on("pointerup", () => (this.right_move = false), this);
   }
 
   private create_world() {
@@ -180,6 +209,9 @@ export default class Play extends Phaser.Scene {
       on: false,
     });
 
+    if (!this.sys.game.device.os.desktop) {
+      this.add_mobile_inputs();
+    }
     this.create_animation();
     this.create_world();
   }

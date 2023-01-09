@@ -25,6 +25,10 @@ export default class Load extends Phaser.Scene {
     this.load.image("enemy", "enemy.png");
     this.load.image("pixel", "pixel.png");
 
+    this.load.image("jumpButton", "jumpButton.png");
+    this.load.image("rightButton", "rightButton.png");
+    this.load.image("leftButton", "leftButton.png");
+
     this.load.audio("jump", ["jump.ogg", "jump.mp3"]);
     this.load.audio("coin", ["coin.ogg", "coin.mp3"]);
     this.load.audio("dead", ["dead.ogg", "dead.mp3"]);

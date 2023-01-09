@@ -41,8 +41,12 @@ export default class Menu extends Phaser.Scene {
       })
       .setOrigin(0.5, 0.5);
 
+    const startText = this.sys.game.device.os.desktop
+      ? "Press the up arrow key to start"
+      : "Touch the screen to start";
+
     this.add
-      .text(250, 275, "Press the up arrow key to start", {
+      .text(250, 275, startText, {
         font: "25px Arial",
       })
       .setOrigin(0.5, 0.5);
@@ -59,6 +63,15 @@ export default class Menu extends Phaser.Scene {
   }
 
   update() {
-    if (this.up_key.isDown) this.scene.start("PlayScene");
+    if (!this.sys.game.device.os.desktop && this.input.activePointer.y < 60) {
+      return;
+    }
+
+    if (
+      this.up_key.isDown ||
+      (!this.sys.game.device.os.desktop && this.input.activePointer.isDown)
+    ) {
+      this.scene.start("PlayScene");
+    }
   }
 }
